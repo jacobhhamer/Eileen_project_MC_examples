@@ -27,6 +27,7 @@ Making a more complicated bettor (Martingale Strategy)
 '''
 
 def dbl_bettor(funds,inital_wager,wager_count):
+    global broke_count
     value = funds
     wager = inital_wager
     wX = []
@@ -39,69 +40,78 @@ def dbl_bettor(funds,inital_wager,wager_count):
 
     while currentWager <= wager_count:
         if previousWager == 'win':
-            print('We won the last wager, yay!')
             if rollDice():  #rollDice returned True
                 value += wager
-                print(value)
                 wX.append(currentWager)
                 vY.append(value)
             else:   #rollDice returned False
                 value -= wager
                 previousWager = 'loss'
-                print(value)
                 previousWagerAmount = wager
                 wX.append(currentWager)
                 vY.append(value)
                 if value < 0:
-                    print('We went broke after',currentWager,'bets')
-                    #currentWager += 100000000000000000000
+                    broke_count += 1
                     break
         elif previousWager == 'loss':
-            print('We lost last one, so we will be smart and dbl!')
+            #print('We lost last one, so we will be smart and dbl!')
             if rollDice():
                 wager = previousWagerAmount * 2
-                print('We won', wager)
                 value += wager
-                print(value)
                 wager = inital_wager
                 previousWager = 'win'
                 wX.append(currentWager)
                 vY.append(value)
             else:
                 wager = previousWagerAmount * 2
-                print('We lost', wager)
+                #print('We lost', wager)
                 value -= wager
-                if value < 0:
-                    print('We broke. Went broke after',currentWager,'bets')
-                    #currentWager += 1000000000000000000000 #example of getting code to stop.
-                    break
-                print(value)
                 previousWager = 'loss'
                 previousWagerAmount = wager
                 wX.append(currentWager)
                 vY.append(value)
+                if value < 0:
+                    #print('We broke. Went broke after',currentWager,'bets')
+                    broke_count += 1
+                    break
+
 
         currentWager += 1
 
-    print(value)
+    #print(value)
     plt.plot(wX,vY)
 
+'''
+Adding some more statistics
+'''
+'''
+xx = 0
+broke_count = 0
 
+while xx < 10:
+    dbl_bettor(10000,100,1000)
+    xx += 1
 
-dbl_bettor(10000,100,100)
+print('death rate:',(broke_count/float(xx)) * 100)
+print('survival rate',100 - ((broke_count/float(xx)) * 100))
+
+#dbl_bettor(10000,100,100)
 plt.title('Double Up Results')
 plt.xlabel('bets')
 plt.ylabel('amount')
+plt.axhline(0, color = 'r')
 plt.show()
 sc.stop() #stops code from here on out. Not interactive like IDL.
 
-time.sleep(555) #pauses code for set amount of seconds.
+#time.sleep(555) #pauses code for set amount of seconds.
+''''
 
 '''
 Simple Bettor, betting the same amount each time. The while loop rolls the dice wager_count times and adds or subtracts
 from the bettor's funds.
 '''
 def simple_bettor(funds, initial_wager, wager_count):
+    global broke_count
     value = funds
     wager = initial_wager
 
@@ -121,6 +131,10 @@ def simple_bettor(funds, initial_wager, wager_count):
             vY.append(value)
             #print(value)
 
+            if value < 0:
+                currentWager += 10000000000000
+                broke_count += 1
+
         currentWager += 1
 
     plt.plot(wX, vY)
@@ -136,7 +150,7 @@ Giving it a go. Roll the dice wager_count times (third entry). Being in the whil
 x = 0
 
 while x < 100:
-    simple_bettor(10000, 100, 100)
+    simple_bettor(10000, 100, 1000)
     x += 1
 
 plt.ylabel("Account Value")
