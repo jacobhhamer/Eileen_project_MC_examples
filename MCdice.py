@@ -104,7 +104,7 @@ plt.show()
 sc.stop() #stops code from here on out. Not interactive like IDL.
 
 #time.sleep(555) #pauses code for set amount of seconds.
-''''
+'''
 
 '''
 Simple Bettor, betting the same amount each time. The while loop rolls the dice wager_count times and adds or subtracts
@@ -148,12 +148,15 @@ Giving it a go. Roll the dice wager_count times (third entry). Being in the whil
 100 trials.
 '''
 x = 0
+broke_count = 0
 
-while x < 100:
+while x < 1000:
     simple_bettor(10000, 100, 1000)
     x += 1
-
+print(('death rate:', (broke_count/float(x)) * 100))
+print(('survival rate:', 100 -(broke_count/float(x)) * 100))
+plt.axhline(0,color = 'r')
 plt.ylabel("Account Value")
 plt.xlabel('Wager Count')
-plt.title('MC Dice: 100 trials of length 100')
+plt.title('MC Dice: 100 trials of length 1000')
 plt.show()
