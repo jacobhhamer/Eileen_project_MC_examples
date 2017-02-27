@@ -9,7 +9,11 @@ import smallcodes as sc
 samplesize = 1000  # How many individual trials
 startingFunds = 10000
 wagerSize = 100
-wagerCount = 10000  # Length of individual trial
+wagerCount = 100  # Length of individual trial
+
+# Values to beat to be better than dbl_bettor in bust and profit
+lower_bust = 31.235
+higher_profit = 63.208
 
 
 def rollDice():
@@ -27,7 +31,70 @@ def rollDice():
         return True
 
 
-def dbl_bettor(funds, inital_wager, wager_count, color):
+def multiple_bettor(funds, initial_wager, wager_count):
+    """
+    A bettor of a different multiple than 2. Used to determine which combination of betting is better.
+    """
+    global multiple_busts
+    global multiple_profits
+    value = funds
+    wager = initial_wager
+    wX = []
+    vY = []
+    currentWager = 1
+    previousWager = 'win'
+    previousWagerAmount = initial_wager
+
+    while currentWager <= wager_count:
+        if previousWager == 'win':
+            if rollDice():  # rollDice returned True
+                value += wager
+                wX.append(currentWager)
+                vY.append(value)
+            else:  # rollDice returned False
+                value -= wager
+                previousWager = 'loss'
+                previousWagerAmount = wager
+                wX.append(currentWager)
+                vY.append(value)
+                if value <= 0:
+                    multiple_busts += 1
+                    break
+        elif previousWager == 'loss':
+            if rollDice():
+                wager = previousWagerAmount * random_multiple
+
+                if (value - wager) < 0:
+                    wager = value
+
+                value += wager
+                wager = initial_wager
+                previousWager = 'win'
+                wX.append(currentWager)
+                vY.append(value)
+            else:
+                wager = previousWagerAmount * random_multiple
+                if (value - wager) < 0:  # Making it so we bet all that was left. Can't go negative.
+                    wager = value
+                value -= wager
+                previousWager = 'loss'
+                previousWagerAmount = wager
+                wX.append(currentWager)
+                vY.append(value)
+                if value <= 0:
+                    multiple_busts += 1
+                    break
+
+        currentWager += 1
+
+    # print(value)
+    #plt.plot(wX, vY, color)
+    if value > funds:
+        multiple_profits += 1
+
+
+
+def dbl_bettor(funds, initial_wager, wager_count, color):
     """
     Making a more complicated bettor (Martingale Strategy). Double your wager when you lose and go back to original
     wager when you win again.
@@ -36,12 +103,12 @@ def dbl_bettor(funds, inital_wager, wager_count, color):
     global dbl_busts  # Adding to see which method make more money/loses more
     global dbl_profits
     value = funds
-    wager = inital_wager
+    wager = initial_wager
     wX = []
     vY = []
     currentWager = 1
     previousWager = 'win'  # We are betting on the previous outcome. Assume start with a win.
-    previousWagerAmount = inital_wager
+    previousWagerAmount = initial_wager
 
     while currentWager <= wager_count:
         if previousWager == 'win':
@@ -67,7 +134,7 @@ def dbl_bettor(funds, inital_wager, wager_count, color):
                     wager = value
 
                 value += wager
-                wager = inital_wager
+                wager = initial_wager
                 previousWager = 'win'
                 wX.append(currentWager)
                 vY.append(value)
@@ -82,40 +149,16 @@ def dbl_bettor(funds, inital_wager, wager_count, color):
                 wX.append(currentWager)
                 vY.append(value)
                 if value <= 0:
-                    # print('We broke. Went broke after',currentWager,'bets')
                     dbl_busts += 1
                     break
 
         currentWager += 1
 
     # print(value)
-    plt.plot(wX, vY, color)
+    #plt.plot(wX, vY, color)
     if value > funds:
         dbl_profits += 1
 
-
-'''
-Adding some more statistics to track losses v wins
-xx = 0
-broke_count = 0
-
-while xx < 10:
-    dbl_bettor(10000,100,1000)
-    xx += 1
-
-print('death rate:',(broke_count/float(xx)) * 100)
-print('survival rate',100 - ((broke_count/float(xx)) * 100))
-
-#dbl_bettor(10000,100,100)
-plt.title('Double Up Results')
-plt.xlabel('bets')
-plt.ylabel('amount')
-plt.axhline(0, color = 'r')
-plt.show()
-sc.stop() #stops code from here on out. Not interactive like IDL.
-
-#time.sleep(555) #pauses code for set amount of seconds.
-'''
 
 
 def simple_bettor(funds, initial_wager, wager_count, color):
@@ -155,10 +198,81 @@ def simple_bettor(funds, initial_wager, wager_count, color):
     if value > funds:
         simple_profits += 1
 
-'''
-Giving it a go for simple_bettor. Roll the dice wager_count times (third entry). Being in the while loop says to show me
-the results for 100 trials.
 
+
+''' Determine which multiple gives a better result for both higher_profit and lower_bust out of 100,000 samples. The MC
+is what gives us the final multiple. You need to visually determine the answer from the output. MC keeps going in either
+direction. Does not look closer to the so far best value.'''
+x = 0
+
+while x < 10000:
+
+    multiple_busts = 0.0
+    multiple_profits = 0.0
+    multiple_sampleSize = 1000
+    currentSample = 1
+
+    random_multiple = random.uniform(0.1, 10.0)
+
+    while currentSample <= multiple_sampleSize:
+        multiple_bettor(startingFunds, wagerSize, wagerCount)
+        currentSample += 1
+
+    if ((multiple_busts/multiple_sampleSize)*100.00 < lower_bust) and ((multiple_profits/multiple_sampleSize)*100.00 > higher_profit):
+        print("###############")
+        print("Found a winner, the multiple was:", random_multiple)
+        print('Lower bust to beat', lower_bust)
+        print('Higher profit rate to beat:', higher_profit)
+        print('Bust rate:',(multiple_busts/multiple_sampleSize)*100.00)
+        print('Profit rate:', (multiple_profits/multiple_sampleSize)*100.00)
+        print('###############')
+
+    else:
+        pass
+        '''print("###############")
+        print("Found a loser, the multiple was:", random_multiple)
+        print('Lower bust to beat', lower_bust)
+        print('Higher profit rate to beat:', higher_profit)
+        print('Bust rate:',(multiple_busts/multiple_sampleSize)*100.00)
+        print('Profit rate:', (multiple_profits/multiple_sampleSize)*100.00)
+        print('###############')'''
+
+    x += 1
+
+
+
+# ------------ NOT USING ANYMORE --------------
+# ---------------------- Previously -----------------------------------------
+''' Adding some more statistics to track losses v wins '''
+
+'''
+xx = 0
+broke_count = 0   # this is no longer in the code, replaced by dbl_bust and simple_busts
+
+while xx < 10:
+    dbl_bettor(10000,100,1000)
+    xx += 1
+
+print('death rate:',(broke_count/float(xx)) * 100)
+print('survival rate',100 - ((broke_count/float(xx)) * 100))
+
+#dbl_bettor(10000,100,100)
+plt.title('Double Up Results')
+plt.xlabel('bets')
+plt.ylabel('amount')
+plt.axhline(0, color = 'r')
+plt.show()
+sc.stop() #stops code from here on out. Not interactive like IDL.
+
+#time.sleep(555) #pauses code for set amount of seconds.
+'''
+
+
+# ------------------------------ Previously in  section -----------------------
+''' Giving it a go for simple_bettor. Roll the dice wager_count times (third entry). Being in the while loop says to
+show me the results for 100 trials. '''
+
+'''
 x = 0
 broke_count = 0
 
@@ -175,7 +289,10 @@ plt.show()
 '''
 
 
+# ---------------- From Analyzing Monte Carlo results section ------------------------
 '''Now run with both bettors to compare which is better.'''
+
+'''
 x = 0
 
 simple_busts = 0.0
@@ -190,12 +307,13 @@ while x < samplesize:
     x += 1
 
 
-print(('Simple Bettor Bust Chances:'), (simple_busts/samplesize)*100.00)
-print(('Double Bettor Bust Chances:'), (dbl_busts/samplesize)*100.00)
-print(('Simple Bettor Profit Chances:'), (simple_profits/samplesize)*100.00)
-print(('Double Bettor Profit Chances:'), (dbl_profits/samplesize)*100.00)
+print('Simple Bettor Bust Chances:', (simple_busts/samplesize)*100.00)
+print('Double Bettor Bust Chances:', (dbl_busts/samplesize)*100.00)
+print('Simple Bettor Profit Chances:', (simple_profits/samplesize)*100.00)
+print('Double Bettor Profit Chances:', (dbl_profits/samplesize)*100.00)
 
 plt.axhline(0, color='r')
 plt.ylabel('Account value')
 plt.xlabel('Wager Count')
 plt.show()
+'''
