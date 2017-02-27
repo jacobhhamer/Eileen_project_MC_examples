@@ -45,7 +45,7 @@ def dAlembert(funds, initial_wager, wager_count):
     previousWagerAmount = initial_wager
 
     while currentWager <= wager_count:
-        if previousWager == 'win':
+        if previousWager == 'win':              # Defining what your wager is
             if wager == initial_wager:
                 pass
             else:
@@ -53,23 +53,23 @@ def dAlembert(funds, initial_wager, wager_count):
 
             #print('current wager:', wager, 'value:', value)
 
-            if rollDice():
+            if rollDice():                      # If you win add to your funds
                 value += wager
                 #print('we won, current value:', value)
                 previousWagerAmount = wager
-            else:
+            else:                               # If you lose subtract from funds
                 value -= wager
                 previousWager = 'loss'
                 #print('we lost. current value:', value)
                 previousWagerAmount = wager
 
-                if value <= 0:
+                if value <= 0:                 # If you lose all your money, you broke!
                     da_busts += 1
                     break
 
-        elif previousWager == 'loss':
+        elif previousWager == 'loss':           # If you lost, add to wager by adding initial_wager (i.e. +100 to bet)
             wager = previousWagerAmount + initial_wager
-            if (value - wager) <= 0:
+            if (value - wager) <= 0:            # If you go negative by doing that just bet what you have left.
                 wager = value
 
             #print('lost the last wager, current wager:', wager, 'value:', value)
