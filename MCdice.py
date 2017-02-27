@@ -6,10 +6,10 @@ import time
 import smallcodes as sc
 
 # Globally define some variables to be used with multiple bettor strategies
-samplesize = 100
+samplesize = 1000  # How many individual trials
 startingFunds = 10000
 wagerSize = 100
-wagerCount = 1000
+wagerCount = 10000  # Length of individual trial
 
 
 def rollDice():
@@ -33,7 +33,8 @@ def dbl_bettor(funds, inital_wager, wager_count, color):
     wager when you win again.
     """
 
-    # global broke_count
+    global dbl_busts  # Adding to see which method make more money/loses more
+    global dbl_profits
     value = funds
     wager = inital_wager
     wX = []
@@ -55,7 +56,7 @@ def dbl_bettor(funds, inital_wager, wager_count, color):
                 wX.append(currentWager)
                 vY.append(value)
                 if value <= 0:
-                    # broke_count += 1
+                    dbl_busts += 1
                     break
         elif previousWager == 'loss':
             # print('We lost last one, so we will be smart and dbl!')
@@ -82,17 +83,19 @@ def dbl_bettor(funds, inital_wager, wager_count, color):
                 vY.append(value)
                 if value <= 0:
                     # print('We broke. Went broke after',currentWager,'bets')
-                    # broke_count += 1
+                    dbl_busts += 1
                     break
 
         currentWager += 1
 
     # print(value)
     plt.plot(wX, vY, color)
+    if value > funds:
+        dbl_profits += 1
 
 
 '''
-Adding some more statistics
+Adding some more statistics to track losses v wins
 xx = 0
 broke_count = 0
 
@@ -121,7 +124,8 @@ def simple_bettor(funds, initial_wager, wager_count, color):
     from the bettor's funds.
     """
 
-    # global broke_count
+    global simple_busts
+    global simple_profits
     value = funds
     wager = initial_wager
     wX = []  # wager X
@@ -141,14 +145,15 @@ def simple_bettor(funds, initial_wager, wager_count, color):
             # print(value)
 
             if value <= 0:
-                #currentWager += 10000000000000
+                simple_busts += 1
                 break
-                # broke_count += 1
+
 
         currentWager += 1
 
     plt.plot(wX, vY, color)
-
+    if value > funds:
+        simple_profits += 1
 
 '''
 Giving it a go for simple_bettor. Roll the dice wager_count times (third entry). Being in the while loop says to show me
@@ -173,11 +178,22 @@ plt.show()
 '''Now run with both bettors to compare which is better.'''
 x = 0
 
+simple_busts = 0.0
+dbl_busts = 0.0
+simple_profits = 0.0
+dbl_profits = 0.0
+
 while x < samplesize:
     simple_bettor(startingFunds, wagerSize, wagerCount, 'k')  # K is black for matplotlib
     #simple_bettor(startingFunds, wagerSize * 2, wagerCount, 'g')
-    dbl_bettor(startingFunds, wagerSize,wagerCount, 'c')
+    dbl_bettor(startingFunds, wagerSize,wagerCount, 'b')
     x += 1
+
+
+print(('Simple Bettor Bust Chances:'), (simple_busts/samplesize)*100.00)
+print(('Double Bettor Bust Chances:'), (dbl_busts/samplesize)*100.00)
+print(('Simple Bettor Profit Chances:'), (simple_profits/samplesize)*100.00)
+print(('Double Bettor Profit Chances:'), (dbl_profits/samplesize)*100.00)
 
 plt.axhline(0, color='r')
 plt.ylabel('Account value')
