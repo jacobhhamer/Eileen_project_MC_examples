@@ -16,6 +16,7 @@ lower_bust = 31.235
 higher_profit = 63.208
 
 
+
 def rollDice():
     """
     Function to represent rolling the dice. House wins if roll 100 or 1-50. You win if roll between 51 and 99.
@@ -30,6 +31,77 @@ def rollDice():
     elif 100 > roll > 50:
         return True
 
+
+def dAlembert(funds, initial_wager, wager_count):
+    """D'Alembert Strategy- for 50/50 odds. If start with $100 and lose then bet $200. If lose again bet $300. If then
+    win bet $200, win bet $100, lose $200, etc.   """
+
+    global da_busts
+    global da_profits
+    value = funds
+    wager = initial_wager
+    currentWager = 1
+    previousWager = 'win'
+    previousWagerAmount = initial_wager
+
+    while currentWager <= wager_count:
+        if previousWager == 'win':
+            if wager == initial_wager:
+                pass
+            else:
+                wager -= initial_wager
+
+            #print('current wager:', wager, 'value:', value)
+
+            if rollDice():
+                value += wager
+                #print('we won, current value:', value)
+                previousWagerAmount = wager
+            else:
+                value -= wager
+                previousWager = 'loss'
+                #print('we lost. current value:', value)
+                previousWagerAmount = wager
+
+                if value <= 0:
+                    da_busts += 1
+                    break
+
+        elif previousWager == 'loss':
+            wager = previousWagerAmount + initial_wager
+            if (value - wager) <= 0:
+                wager = value
+
+            #print('lost the last wager, current wager:', wager, 'value:', value)
+
+            if rollDice():
+                value += wager
+                #print('we won, current value:', value)
+                previousWagerAmount = wager
+                previousWager = 'win'
+
+            else:
+                value -= wager
+                #print('we lost, curren value:', value)
+                previousWagerAmount = wager
+
+                if value <= 0:
+                    da_busts += 1
+                    break
+
+        currentWager += 1
+
+    if value > funds:
+        da_profits += 1
+
+    print(value)
+
+
+da_busts = 0.0
+da_profits = 0.0
+dAlembert(startingFunds, wagerSize, wagerCount)
+
+time.sleep(55555)
 
 def multiple_bettor(funds, initial_wager, wager_count):
     """
@@ -219,12 +291,6 @@ while x < 10000:
         currentSample += 1
 
     if ((multiple_busts/multiple_sampleSize)*100.00 < lower_bust) and ((multiple_profits/multiple_sampleSize)*100.00 > higher_profit):
-        '''winner = random_multiple
-        bust_rate = (multiple_busts/multiple_sampleSize)*100.00
-        profit_rate = (multiple_profits/multiple_sampleSize)*100.00
-        winner_bust = bust_rate
-        winner_profit = profit_rate'''
-
         print("###############")
         print("Found a winner, the multiple was:", random_multiple)
         print('Lower bust to beat', lower_bust)
@@ -232,17 +298,6 @@ while x < 10000:
         print('Bust rate:',(multiple_busts/multiple_sampleSize)*100.00)
         print('Profit rate:', (multiple_profits/multiple_sampleSize)*100.00)
         print('###############')
-        '''if winner:                                                       #Trying to figure out how to make it narrow
-            random_multiple += random.uniform(0.01,0.05)                        the range once you know a good value.
-            print("###############")
-            print("Found a winner, the multiple was:", random_multiple)
-            print('Lower bust to beat', lower_bust)
-            print('Higher profit rate to beat:', higher_profit)
-            print('Bust rate:', (multiple_busts / multiple_sampleSize) * 100.00)
-            print('Profit rate:', (multiple_profits / multiple_sampleSize) * 100.00)
-            print('###############')
-        else:
-            pass'''
     else:
         pass
         '''print("###############")
