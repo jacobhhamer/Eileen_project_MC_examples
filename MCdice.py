@@ -219,6 +219,12 @@ while x < 10000:
         currentSample += 1
 
     if ((multiple_busts/multiple_sampleSize)*100.00 < lower_bust) and ((multiple_profits/multiple_sampleSize)*100.00 > higher_profit):
+        '''winner = random_multiple
+        bust_rate = (multiple_busts/multiple_sampleSize)*100.00
+        profit_rate = (multiple_profits/multiple_sampleSize)*100.00
+        winner_bust = bust_rate
+        winner_profit = profit_rate'''
+
         print("###############")
         print("Found a winner, the multiple was:", random_multiple)
         print('Lower bust to beat', lower_bust)
@@ -226,7 +232,17 @@ while x < 10000:
         print('Bust rate:',(multiple_busts/multiple_sampleSize)*100.00)
         print('Profit rate:', (multiple_profits/multiple_sampleSize)*100.00)
         print('###############')
-
+        '''if winner:                                                       #Trying to figure out how to make it narrow
+            random_multiple += random.uniform(0.01,0.05)                        the range once you know a good value.
+            print("###############")
+            print("Found a winner, the multiple was:", random_multiple)
+            print('Lower bust to beat', lower_bust)
+            print('Higher profit rate to beat:', higher_profit)
+            print('Bust rate:', (multiple_busts / multiple_sampleSize) * 100.00)
+            print('Profit rate:', (multiple_profits / multiple_sampleSize) * 100.00)
+            print('###############')
+        else:
+            pass'''
     else:
         pass
         '''print("###############")
