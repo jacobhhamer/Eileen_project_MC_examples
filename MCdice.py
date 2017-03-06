@@ -99,7 +99,16 @@ def dAlembert(funds, initial_wager, wager_count):
 
 da_busts = 0.0
 da_profits = 0.0
-dAlembert(startingFunds, wagerSize, wagerCount)
+dasampsize = 100
+counter = 0
+
+# DEBUGING tetsing checking compared to MCdice5050
+while counter <= dasampsize:
+    dAlembert(startingFunds, wagerSize, wagerCount)
+    counter += 1
+
+print('Bust rate:', (da_busts/dasampsize)*100.00)
+print('Profit rate:',(da_profits/dasampsize)*100.00)
 
 time.sleep(55555)
 
