@@ -5,9 +5,9 @@ import time
 
 # Define variables that can be used with all functions
 samplesize = 1000  # How many individual trials
-startingfunds = 10000
+startingfunds = 100000
 wagersize = 100
-wagercount = 100  # Length of individual trial
+wagercount = 1000  # Length of individual trial
 
 
 def rolldice():
@@ -84,7 +84,7 @@ def dAlembert(funds, initial_wager, wager_count):
     if value > funds:
         da_profits += 1
 
-    print(value)
+    #print(value)
 
     ret += value
 
@@ -92,7 +92,7 @@ def dAlembert(funds, initial_wager, wager_count):
 ret = 0.0
 da_busts = 0.0
 da_profits = 0.0
-dasampsize = 100
+dasampsize = 1000
 counter = 1
 
 while counter <= dasampsize:
@@ -102,10 +102,13 @@ while counter <= dasampsize:
 print('Total Invested:', dasampsize * startingfunds)
 print('Total return:', ret)
 print('ROI:', ret - (dasampsize * startingfunds))
-print('Bust rate:', (da_busts/dasampsize)*100.00)
-print('Profit rate:',(da_profits/dasampsize)*100.00)
+print('Bust rate:', (da_busts/dasampsize) * 100.00)
+print('Profit rate:', (da_profits/dasampsize) * 100.00)
 
 
+
+''' Initally shown in the 50/50 odds section as the code, but was never used in that video or the next one. Not Sure if/
+when it will actually be used. '''
 
 # def multiple_bettor2(funds, inital_wager, wager_count, multiple):  #, color):
 #     global ROI
@@ -121,7 +124,7 @@ print('Profit rate:',(da_profits/dasampsize)*100.00)
 #     previouswageramount = inital_wager
 #
 #     while currentwager <= wager_count:
-#         if previouswager == 'win'
+#         if previouswager == 'win':
 #             if rolldice():                # Somehow this knows to use rolldice before evaluating for the if or else
 #                 value += wager              # if statements only execute true statements
 #                 wx.append(currentwager)
@@ -135,7 +138,7 @@ print('Profit rate:',(da_profits/dasampsize)*100.00)
 #                 if value <= 0:
 #                     multiple_busts += 1
 #                     break
-#         elif previouswager == 'loss'
+#         elif previouswager == 'loss':
 #             if rolldice():
 #                 wager = previouswageramount * multiple
 #                 if (value - wager) <= 0:
@@ -158,7 +161,7 @@ print('Profit rate:',(da_profits/dasampsize)*100.00)
 #                     break
 #
 #         currentwager += 1
-#     print('ending value:', value)
+#     #print('ending value:', value)
 #     ROI += value
 #
 #     plt.plot(wx,vy)
@@ -166,14 +169,14 @@ print('Profit rate:',(da_profits/dasampsize)*100.00)
 #     if value > funds:
 #         multiple_profits += 1
 #
-
+#
 # multiplesamplesize = 1000000
 # multiple_busts = 0.0
 # multiple_profits = 0.0
 # ROI = 0
 #
-# counter = 1
-# while counter <= multiplesamplesize:
+# counter2 = 1
+# while counter2 <= multiplesamplesize:
 #     multiple_bettor2(startingfunds, wagersize, wagercount, 1.75)
-#     counter += 1
+#     counter2 += 1
 
