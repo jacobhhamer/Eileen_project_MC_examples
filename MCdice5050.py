@@ -11,7 +11,9 @@ wagercount = 1000  # Length of individual trial
 
 
 def rolldice():
-    """ Generate a dice rolling, where you have 50/50 odds """
+    """ Generate a dice rolling, where you have 50/50 odds. Generates random number between 1 and 100.
+
+    Returns False if <= 50, returns True if >= 51. """
 
     roll = random.randint(1, 100)
 
@@ -21,9 +23,19 @@ def rolldice():
         return True
 
 
-def dAlembert(funds, initial_wager, wager_count):
-    """D'Alembert Strategy- for 50/50 odds. If start with $100 and lose then bet $200. If lose again bet $300. If then
-    win bet $200, win bet $100, lose $200, etc.   """
+def dalembert(funds, initial_wager, wager_count):
+    """D'Alembert Strategy- for 50/50 odds.
+
+    If start with $100 and lose, then bet $200. If lose again bet $300. If then win bet $200, win bet $100,
+    lose $200, etc.
+
+    Parameters
+    ----------
+    funds: Amount you have to bet
+    initial wager: Initial wager amount
+    wager_count: How many times you want to bet
+
+    """
 
     global ret
     global da_busts
@@ -96,7 +108,7 @@ dasampsize = 1000
 counter = 1
 
 while counter <= dasampsize:
-    dAlembert(startingfunds, wagersize, wagercount)
+    dalembert(startingfunds, wagersize, wagercount)
     counter += 1
 
 print('Total Invested:', dasampsize * startingfunds)
