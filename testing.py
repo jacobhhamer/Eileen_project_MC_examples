@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import time
 import smallcodes as sc
 
+"""Chirp"""
+
 # Globally define some variables to be used with multiple bettor strategies
 samplesize = 1000  # How many individual trials
 startingFunds = 10000
