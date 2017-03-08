@@ -8,7 +8,7 @@ samplesize = 1000  # How many individual trials
 startingfunds = 100000
 wagersize = 100
 wagercount = 1000  # Length of individual trial
-#Hola
+#Hola Hola yo.
 
 def rolldice():
     """ Generate a dice rolling, where you have 50/50 odds. Generates random number between 1 and 100.
